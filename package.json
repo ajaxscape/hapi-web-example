@@ -7,7 +7,7 @@
     "build:css": "bin/build-css",
     "build": "bin/build",
     "lint": "standard",
-    "unit-test": "lab -c -r console -o stdout -r lcov -o lcov.info",
+    "unit-test": "lab --coverage --reporter console --output stdout --reporter html --output coverage.html --verbose -I 'core,__core-js_shared__'",
     "test": "npm run lint && npm run unit-test",
     "postinstall": "npm run build"
   },
