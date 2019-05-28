@@ -20,23 +20,23 @@ module.exports = [
   {
     method: 'GET',
     path,
+    handler: async () => {
+      return Contact.getAll()
+    },
     options: {
-      handler: async () => {
-        return Contact.getAll()
-      },
       tags: ['api']
     }
   }, {
     method: 'GET',
     path: `${path}/{id}`,
+    handler: async (request) => {
+      const contact = Contact.getById(request.params.id)
+      if (contact) {
+        return contact
+      }
+      return boom.notFound()
+    },
     options: {
-      handler: async (request) => {
-        const contact = Contact.getById(request.params.id)
-        if (contact) {
-          return contact
-        }
-        return boom.notFound()
-      },
       tags: ['api'],
       validate: {
         params: {
@@ -48,11 +48,11 @@ module.exports = [
   }, {
     method: 'POST',
     path,
+    handler: async (request) => {
+      const contact = new Contact(request.payload)
+      return contact.save()
+    },
     options: {
-      handler: async (request) => {
-        const contact = new Contact(request.payload)
-        return contact.save()
-      },
       tags: ['api'],
       validate: {
         payload: joi.object({
@@ -65,15 +65,15 @@ module.exports = [
   }, {
     method: ['PUT', 'PATCH'],
     path: `${path}/{id}`,
+    handler: async (request) => {
+      const contact = await Contact.getById(request.params.id)
+      if (contact) {
+        Object.assign(contact, request.payload)
+        return contact.save()
+      }
+      return boom.notFound()
+    },
     options: {
-      handler: async (request) => {
-        const contact = await Contact.getById(request.params.id)
-        if (contact) {
-          Object.assign(contact, request.payload)
-          return contact.save()
-        }
-        return boom.notFound()
-      },
       tags: ['api'],
       validate: {
         params: {
@@ -89,14 +89,14 @@ module.exports = [
   }, {
     method: 'DELETE',
     path: `${path}/{id}`,
+    handler: async (request) => {
+      const contact = await Contact.getById(request.params.id)
+      if (contact) {
+        return contact.delete()
+      }
+      return boom.notFound()
+    },
     options: {
-      handler: async (request) => {
-        const contact = await Contact.getById(request.params.id)
-        if (contact) {
-          return contact.delete()
-        }
-        return boom.notFound()
-      },
       tags: ['api'],
       validate: {
         params: {
