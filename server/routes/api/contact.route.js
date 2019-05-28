@@ -1,6 +1,7 @@
 // routes.js
 const { Contact } = require('../../models')
 const joi = require('@hapi/joi')
+const boom = require('@hapi/boom')
 const path = '/contacts'
 
 const handleError = function (request, h, err) {
@@ -30,7 +31,11 @@ module.exports = [
     path: `${path}/{id}`,
     options: {
       handler: async (request) => {
-        return Contact.getById(request.params.id)
+        const contact = Contact.getById(request.params.id)
+        if (contact) {
+          return contact
+        }
+        return boom.notFound()
       },
       tags: ['api'],
       validate: {
@@ -63,8 +68,11 @@ module.exports = [
     options: {
       handler: async (request) => {
         const contact = await Contact.getById(request.params.id)
-        Object.assign(contact, request.payload)
-        contact.save()
+        if (contact) {
+          Object.assign(contact, request.payload)
+          return contact.save()
+        }
+        return boom.notFound()
       },
       tags: ['api'],
       validate: {
@@ -84,7 +92,10 @@ module.exports = [
     options: {
       handler: async (request) => {
         const contact = await Contact.getById(request.params.id)
-        return contact.delete()
+        if (contact) {
+          return contact.delete()
+        }
+        return boom.notFound()
       },
       tags: ['api'],
       validate: {

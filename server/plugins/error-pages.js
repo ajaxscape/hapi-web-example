@@ -38,7 +38,7 @@ module.exports = {
           // The return the `500` view
           switch (request.headers['content-type']) {
             case API_CONTENT_TYPE:
-              return boom.serverError()
+              return boom.badImplementation()
             default:
               return h.view('500').code(statusCode)
           }
