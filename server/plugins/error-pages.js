@@ -2,6 +2,10 @@
 * Add an `onPreResponse` listener to return error pages
 */
 
+const boom = require('@hapi/boom')
+
+const API_CONTENT_TYPE = 'application/json'
+
 module.exports = {
   plugin: {
     name: 'error-pages',
@@ -17,7 +21,12 @@ module.exports = {
           // In the event of 404
           // return the `404` view
           if (statusCode === 404) {
-            return h.view('404').code(statusCode)
+            switch (request.headers['content-type']) {
+              case API_CONTENT_TYPE:
+                return boom.notFound()
+              default:
+                return h.view('404').code(statusCode)
+            }
           }
 
           request.log('error', {
@@ -27,7 +36,12 @@ module.exports = {
           })
 
           // The return the `500` view
-          return h.view('500').code(statusCode)
+          switch (request.headers['content-type']) {
+            case API_CONTENT_TYPE:
+              return boom.serverError()
+            default:
+              return h.view('500').code(statusCode)
+          }
         }
         return h.continue
       })

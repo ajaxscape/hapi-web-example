@@ -1,6 +1,19 @@
 // routes.js
-const { Contact } = require('./models')
-const path = '/contacts(api)'
+const { Contact } = require('../../models')
+const joi = require('@hapi/joi')
+const path = '/contacts'
+
+const handleError = function (request, h, err) {
+  if (err.isJoi && Array.isArray(err.details) && err.details.length > 0) {
+    const invalidItem = err.details[0]
+    return h.response(`Data Validation Error. Schema violation. <${invalidItem.path}> \nDetails: ${JSON.stringify(err.details)}`)
+      .code(400)
+      .takeover()
+  }
+
+  return h.response(err)
+    .takeover()
+}
 
 module.exports = [
   {
@@ -19,7 +32,13 @@ module.exports = [
       handler: async (request) => {
         return Contact.getById(request.params.id)
       },
-      tags: ['api']
+      tags: ['api'],
+      validate: {
+        params: {
+          id: joi.string().guid()
+        },
+        failAction: handleError
+      }
     }
   }, {
     method: 'POST',
@@ -29,7 +48,14 @@ module.exports = [
         const contact = new Contact(request.payload)
         return contact.save()
       },
-      tags: ['api']
+      tags: ['api'],
+      validate: {
+        payload: joi.object({
+          firstName: joi.string().required(),
+          lastName: joi.string().required()
+        }),
+        failAction: handleError
+      }
     }
   }, {
     method: ['PUT', 'PATCH'],
@@ -40,7 +66,17 @@ module.exports = [
         Object.assign(contact, request.payload)
         contact.save()
       },
-      tags: ['api']
+      tags: ['api'],
+      validate: {
+        params: {
+          id: joi.string().guid()
+        },
+        payload: joi.object({
+          firstName: joi.string(),
+          lastName: joi.string()
+        }),
+        failAction: handleError
+      }
     }
   }, {
     method: 'DELETE',
@@ -50,7 +86,13 @@ module.exports = [
         const contact = await Contact.getById(request.params.id)
         return contact.delete()
       },
-      tags: ['api']
+      tags: ['api'],
+      validate: {
+        params: {
+          id: joi.string().guid()
+        },
+        failAction: handleError
+      }
     }
   }
 ]

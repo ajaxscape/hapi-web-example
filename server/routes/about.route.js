@@ -4,7 +4,6 @@ module.exports = {
   options: {
     handler: {
       view: 'about'
-    },
-    tags: ['api']
+    }
   }
 }
