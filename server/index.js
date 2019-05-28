@@ -18,6 +18,7 @@ async function createServer () {
   await server.register([
     require('@hapi/inert'),
     require('./plugins/views'),
+    require('./plugins/validate-params'),
     require('./plugins/hapi-router'),
     require('./plugins/error-pages')
   ])
