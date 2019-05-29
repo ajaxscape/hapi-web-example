@@ -1,6 +1,5 @@
 
 const boom = require('@hapi/boom')
-const joi = require('@hapi/joi')
 
 module.exports = class Handlers {
   constructor (Model) {
@@ -43,10 +42,8 @@ module.exports = class Handlers {
 
   async handleError (request, h, err) {
     if (err.isJoi && Array.isArray(err.details) && err.details.length > 0) {
-      const invalidItem = err.details[0]
-      return h.response(`Data Validation Error. Schema violation. <${invalidItem.path}> \nDetails: ${JSON.stringify(err.details)}`)
-        .code(400)
-        .takeover()
+      const { payload } = err.output
+      return boom.badData(payload.message, payload)
     }
 
     return h.response(err)
@@ -87,8 +84,8 @@ module.exports = class Handlers {
         options: {
           tags: ['api'],
           validate: {
-            payload: joi.object(post),
-            failAction: handleDelete
+            payload: post,
+            failAction: handleError
           }
         }
       }, {
@@ -99,8 +96,8 @@ module.exports = class Handlers {
           tags: ['api'],
           validate: {
             params,
-            payload: joi.object(patch),
-            failAction: handleDelete
+            payload: patch,
+            failAction: handleError
           }
         }
       }, {
@@ -111,7 +108,7 @@ module.exports = class Handlers {
           tags: ['api'],
           validate: {
             params,
-            failAction: handleDelete
+            failAction: handleError
           }
         }
       }
