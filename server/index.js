@@ -19,7 +19,7 @@ async function createServer () {
     require('@hapi/inert'),
     require('./plugins/views'),
     require('./plugins/hapi-router'),
-    require('./plugins/error-pages')
+    require('./plugins/error-routes')
   ])
 
   if (config.isDev) {

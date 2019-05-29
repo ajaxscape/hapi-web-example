@@ -1,6 +1,6 @@
 
 const joi = require('@hapi/joi')
-const { Contact } = require('../../models')
+const { Contact } = require('../models')
 const Handlers = require('./handlers')
 const handlers = new Handlers(Contact)
 
