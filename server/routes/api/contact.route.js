@@ -9,12 +9,12 @@ module.exports = handlers.routes({
   params: {
     id: joi.string().guid()
   },
-  post: {
+  post: joi.object({
     firstName: joi.string().required(),
     lastName: joi.string().required()
-  },
-  patch: {
+  }),
+  patch: joi.object({
     firstName: joi.string(),
     lastName: joi.string()
-  }
+  })
 })

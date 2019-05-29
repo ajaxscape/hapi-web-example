@@ -1,6 +1,5 @@
 
 const boom = require('@hapi/boom')
-const joi = require('@hapi/joi')
 
 module.exports = class Handlers {
   constructor (Model) {
@@ -87,7 +86,7 @@ module.exports = class Handlers {
         options: {
           tags: ['api'],
           validate: {
-            payload: joi.object(post),
+            payload: post,
             failAction: handleDelete
           }
         }
@@ -99,7 +98,7 @@ module.exports = class Handlers {
           tags: ['api'],
           validate: {
             params,
-            payload: joi.object(patch),
+            payload: patch,
             failAction: handleDelete
           }
         }
