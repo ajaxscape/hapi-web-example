@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index",
     "lint": "standard",
     "unit-test": "lab --coverage --reporter console --output stdout --reporter html --output coverage.html --verbose -I 'core,__core-js_shared__'",
     "test": "npm run lint && npm run unit-test"
@@ -16,6 +17,8 @@
     "@hapi/inert": "^5.2.0",
     "@hapi/joi": "^15.0.3",
     "@hapi/vision": "^5.5.2",
+    "dotenv": "^8.0.0",
+    "hapi-robots": "^3.2.0",
     "hapi-router": "^5.0.0",
     "hapi-swagger": "^10.0.1",
     "require-all": "^3.0.0",

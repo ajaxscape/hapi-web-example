@@ -20,7 +20,7 @@ module.exports = class Contact {
       this.id = uuid()
       contacts[this.id] = this
     }
-    return this.id
+    return this
   }
 
   async delete () {
