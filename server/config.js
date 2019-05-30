@@ -1,32 +1,39 @@
+// Load application configuration using Dotenv
+// (see https://www.npmjs.com/package/dotenv)
+require('dotenv').config()
+
 const joi = require('@hapi/joi')
 
-// Define config schema
+// Define environment options
+const DEVELOPMENT = 'DEVELOPMENT'
+const TEST = 'TEST'
+const PRODUCTION = 'PRODUCTION'
+
+// Define the config schema
 const schema = {
   port: joi.number().default(3000),
-  env: joi.string().valid('development', 'test', 'production').default('development')
+  env: joi.string().valid(DEVELOPMENT, TEST, PRODUCTION).default(DEVELOPMENT)
 }
 
-// Build config
+// Build the config
 const config = {
   port: process.env.PORT,
   env: process.env.NODE_ENV
 }
 
-// Validate config
-const result = joi.validate(config, schema, {
+// Validate the config
+const { value, error } = joi.validate(config, schema, {
   abortEarly: false
 })
 
 // Throw if config is invalid
-if (result.error) {
-  throw new Error(`The server config is invalid. ${result.error.message}`)
+if (error) {
+  throw new Error(`The server config is invalid. ${error.message}`)
 }
 
-// Use the joi validated value
-const value = result.value
+// Add some helper props to the validated config
+value.isDev = value.env === DEVELOPMENT
+value.isProd = value.env === PRODUCTION
 
-// Add some helper props
-value.isDev = value.env === 'development'
-value.isProd = value.env === 'production'
-
+// Export the validated config
 module.exports = value

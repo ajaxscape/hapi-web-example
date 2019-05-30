@@ -19,6 +19,7 @@ async function createServer () {
     require('@hapi/inert'),
     require('./plugins/views'),
     require('./plugins/hapi-router'),
+    require('./plugins/hapi-robots'),
     require('./plugins/error-routes')
   ])
 

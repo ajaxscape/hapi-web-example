@@ -20,7 +20,7 @@ module.exports = class Application {
       this.id = uuid()
       applications[this.id] = this
     }
-    return this.id
+    return this
   }
 
   async delete () {

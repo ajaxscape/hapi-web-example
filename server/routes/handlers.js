@@ -89,7 +89,7 @@ module.exports = class Handlers {
           }
         }
       }, {
-        method: ['PUT', 'PATCH'],
+        method: 'PATCH',
         path: `${path}/{id}`,
         handler: handlePatch,
         options: {
