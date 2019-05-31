@@ -2,7 +2,7 @@
 // (see https://www.npmjs.com/package/dotenv)
 require('dotenv').config()
 
-const joi = require('@hapi/joi')
+const Joi = require('@hapi/joi')
 
 // Define environment options
 const DEVELOPMENT = 'DEVELOPMENT'
@@ -11,8 +11,8 @@ const PRODUCTION = 'PRODUCTION'
 
 // Define the config schema
 const schema = {
-  port: joi.number().default(3000),
-  env: joi.string().valid(DEVELOPMENT, TEST, PRODUCTION).default(DEVELOPMENT)
+  port: Joi.number().default(3000),
+  env: Joi.string().valid(DEVELOPMENT, TEST, PRODUCTION).default(DEVELOPMENT)
 }
 
 // Build the config
@@ -22,7 +22,7 @@ const config = {
 }
 
 // Validate the config
-const { value, error } = joi.validate(config, schema, {
+const { value, error } = Joi.validate(config, schema, {
   abortEarly: false
 })
 

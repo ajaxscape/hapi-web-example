@@ -1,18 +1,18 @@
 
-const joi = require('@hapi/joi')
+const Joi = require('@hapi/joi')
 const { Application } = require('../models')
 const Handlers = require('./handlers')
 const handlers = new Handlers(Application)
 
-const schema = joi.object({
-  categoryId: joi.string().guid(),
-  contactId: joi.string().guid()
+const schema = Joi.object({
+  categoryId: Joi.string().guid(),
+  contactId: Joi.string().guid()
 }).label('Application')
 
 module.exports = handlers.routes({
   path: '/applications',
   params: {
-    id: joi.string().guid()
+    id: Joi.string().guid()
   },
   post: schema,
   patch: schema

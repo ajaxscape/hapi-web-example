@@ -1,5 +1,5 @@
 
-const boom = require('@hapi/boom')
+const Boom = require('@hapi/boom')
 
 module.exports = class Handlers {
   constructor (Model) {
@@ -15,7 +15,7 @@ module.exports = class Handlers {
     if (model) {
       return model
     }
-    return boom.notFound()
+    return Boom.notFound()
   }
 
   async handlePost (request) {
@@ -29,7 +29,7 @@ module.exports = class Handlers {
       Object.assign(model, request.payload)
       return model.save()
     }
-    return boom.notFound()
+    return Boom.notFound()
   }
 
   async handleDelete (request) {
@@ -37,13 +37,13 @@ module.exports = class Handlers {
     if (model) {
       return model.delete()
     }
-    return boom.notFound()
+    return Boom.notFound()
   }
 
   async handleError (request, h, err) {
     if (err.isJoi && Array.isArray(err.details) && err.details.length > 0) {
       const { payload } = err.output
-      return boom.badData(payload.message, payload)
+      return Boom.badData(payload.message, payload)
     }
 
     return h.response(err)
