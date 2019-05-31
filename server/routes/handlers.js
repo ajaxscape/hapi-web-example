@@ -50,7 +50,7 @@ module.exports = class Handlers {
       .takeover()
   }
 
-  routes ({ path, params, post, patch }) {
+  routes ({ path, params, schema }) {
     const handleGet = this.handleGet.bind(this)
     const handleGetById = this.handleGetById.bind(this)
     const handlePost = this.handlePost.bind(this)
@@ -84,7 +84,7 @@ module.exports = class Handlers {
         options: {
           tags: ['api'],
           validate: {
-            payload: post,
+            payload: schema,
             failAction: handleError
           }
         }
@@ -96,7 +96,7 @@ module.exports = class Handlers {
           tags: ['api'],
           validate: {
             params,
-            payload: patch,
+            payload: schema,
             failAction: handleError
           }
         }

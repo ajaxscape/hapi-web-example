@@ -11,7 +11,6 @@ const UNKNOWN_GUID = 'e5ea3b73-1666-47dc-82e0-037baa5fba29'
 const INVALID_GUID = 'INVALID-GUID'
 
 const invalidGuidMessage = (prop) => `child "${prop}" fails because ["${prop}" must be a valid GUID]`
-const isRequiredMessage = (prop) => `child "${prop}" fails because ["${prop}" is required]`
 const invalidStringMessage = (prop) => `child "${prop}" fails because ["${prop}" must be a string]`
 
 lab.experiment('Contact route: ', () => {
@@ -148,7 +147,7 @@ lab.experiment('Contact route: ', () => {
     })
 
     lab.test('responds with "Bad Data" when invalid data is posted', async () => {
-      testResponse(await server.inject(request({ firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}. ${isRequiredMessage('lastName')}`).output)
+      testResponse(await server.inject(request({ firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}`).output)
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {

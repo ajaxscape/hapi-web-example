@@ -1,8 +1,16 @@
+const Joi = require('@hapi/joi')
 const uuid = require('uuid/v1')
 
 const contacts = {}
 
 module.exports = class Contact {
+  static get schema () {
+    return {
+      firstName: Joi.string(),
+      lastName: Joi.string()
+    }
+  }
+
   constructor (data) {
     Object.assign(this, data)
   }
