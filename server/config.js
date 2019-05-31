@@ -5,9 +5,9 @@ require('dotenv').config()
 const Joi = require('@hapi/joi')
 
 // Define environment options
-const DEVELOPMENT = 'DEVELOPMENT'
-const TEST = 'TEST'
-const PRODUCTION = 'PRODUCTION'
+const DEVELOPMENT = 'development'
+const TEST = 'test'
+const PRODUCTION = 'production'
 
 // Define the config schema
 const schema = {
