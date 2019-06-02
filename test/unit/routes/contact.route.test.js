@@ -3,16 +3,17 @@ const Code = require('code')
 const sinon = require('sinon')
 const Boom = require('@hapi/boom')
 const lab = exports.lab = Lab.script()
-const createServer = require('../../server')
-const path = '/applications'
-const { Application } = require('../../server/models')
+const createServer = require('../../../server')
+const path = '/contacts'
+const { Contact } = require('../../../server/models')
 
 const UNKNOWN_GUID = 'e5ea3b73-1666-47dc-82e0-037baa5fba29'
 const INVALID_GUID = 'INVALID-GUID'
 
 const invalidGuidMessage = (prop) => `child "${prop}" fails because ["${prop}" must be a valid GUID]`
+const invalidStringMessage = (prop) => `child "${prop}" fails because ["${prop}" must be a string]`
 
-lab.experiment('Application route: ', () => {
+lab.experiment('Contact route: ', () => {
   let server
 
   // Create server before the tests
@@ -33,9 +34,9 @@ lab.experiment('Application route: ', () => {
   lab.beforeEach(() => {
     mocks = {
       id: 'a5754ea4-aee8-40d3-a0d7-e7681ed8ef3a',
-      application: new Application({
-        categoryId: 'e5ea3b73-1666-47dc-82e0-037baa5fba29',
-        contactId: '20f219ce-fcc5-4ee0-8d53-6e4476daf47a'
+      contact: new Contact({
+        firstName: 'James',
+        lastName: 'Bond'
       })
     }
 
@@ -61,17 +62,17 @@ lab.experiment('Application route: ', () => {
       }
     })
 
-    lab.test('responds with all applications', async () => {
-      sandbox.stub(Application, 'getAll').value(async () => [mocks.application])
+    lab.test('responds with all contacts', async () => {
+      sandbox.stub(Contact, 'getAll').value(async () => [mocks.contact])
 
       testResponse(await server.inject(request()), {
         statusCode: 200,
-        payload: [mocks.application]
+        payload: [mocks.contact]
       })
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
-      sandbox.stub(Application, 'getAll').value(async () => {
+      sandbox.stub(Contact, 'getAll').value(async () => {
         throw new Error('failure')
       })
 
@@ -92,17 +93,17 @@ lab.experiment('Application route: ', () => {
       }
     })
 
-    lab.test('responds with the existing application when {id} is an existing guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => mocks.application)
+    lab.test('responds with the existing contact when {id} is an existing guid', async () => {
+      sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
 
       testResponse(await server.inject(request(mocks.id)), {
         statusCode: 200,
-        payload: mocks.application
+        payload: mocks.contact
       })
     })
 
     lab.test('responds with "Not Found" when {id} is an unknown guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => undefined)
+      sandbox.stub(Contact, 'getById').value(async () => undefined)
 
       testResponse(await server.inject(request(UNKNOWN_GUID)), Boom.notFound().output)
     })
@@ -112,7 +113,7 @@ lab.experiment('Application route: ', () => {
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
-      sandbox.stub(Application, 'getById').value(async () => {
+      sandbox.stub(Contact, 'getById').value(async () => {
         throw new Error('failure')
       })
 
@@ -134,25 +135,25 @@ lab.experiment('Application route: ', () => {
       }
     })
 
-    lab.test('responds with the added application', async () => {
-      sandbox.stub(Application.prototype, 'save').value(async () => mocks.application)
+    lab.test('responds with the added contact', async () => {
+      sandbox.stub(Contact.prototype, 'save').value(async () => mocks.contact)
 
-      testResponse(await server.inject(request(mocks.application)), {
+      testResponse(await server.inject(request(mocks.contact)), {
         statusCode: 200,
-        payload: mocks.application
+        payload: mocks.contact
       })
     })
 
     lab.test('responds with "Bad Data" when invalid data is posted', async () => {
-      testResponse(await server.inject(request({ categoryId: INVALID_GUID, contactId: INVALID_GUID })), Boom.badData(`${invalidGuidMessage('categoryId')}. ${invalidGuidMessage('contactId')}`).output)
+      testResponse(await server.inject(request({ firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}`).output)
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
-      sandbox.stub(Application.prototype, 'save').value(async () => {
+      sandbox.stub(Contact.prototype, 'save').value(async () => {
         throw new Error('failure')
       })
 
-      testResponse(await server.inject(request(mocks.application)), Boom.badImplementation().output)
+      testResponse(await server.inject(request(mocks.contact)), Boom.badImplementation().output)
     })
   })
 
@@ -170,36 +171,36 @@ lab.experiment('Application route: ', () => {
       }
     })
 
-    lab.test('responds with the updated application when {id} is an existing guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => mocks.application)
-      sandbox.stub(Application.prototype, 'save').value(async () => mocks.application)
+    lab.test('responds with the updated contact when {id} is an existing guid', async () => {
+      sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
+      sandbox.stub(Contact.prototype, 'save').value(async () => mocks.contact)
 
-      testResponse(await server.inject(request(mocks.id, mocks.application)), {
+      testResponse(await server.inject(request(mocks.id, mocks.contact)), {
         statusCode: 200,
-        payload: mocks.application
+        payload: mocks.contact
       })
     })
 
     lab.test('responds with "Not Found" when {id} is an unknown guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => undefined)
+      sandbox.stub(Contact, 'getById').value(async () => undefined)
 
-      testResponse(await server.inject(request(UNKNOWN_GUID, mocks.application)), Boom.notFound().output)
+      testResponse(await server.inject(request(UNKNOWN_GUID, mocks.contact)), Boom.notFound().output)
     })
 
     lab.test('responds with "Bad Data" when {id} is an invalid guid', async () => {
-      testResponse(await server.inject(request(INVALID_GUID, mocks.application)), Boom.badData(invalidGuidMessage('id')).output)
+      testResponse(await server.inject(request(INVALID_GUID, mocks.contact)), Boom.badData(invalidGuidMessage('id')).output)
     })
 
     lab.test('responds with "Bad Data" when invalid data is patched', async () => {
-      testResponse(await server.inject(request(mocks.id, { categoryId: INVALID_GUID, contactId: INVALID_GUID })), Boom.badData(`${invalidGuidMessage('categoryId')}. ${invalidGuidMessage('contactId')}`).output)
+      testResponse(await server.inject(request(mocks.id, { firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}`).output)
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
-      sandbox.stub(Application, 'getById').value(async () => {
+      sandbox.stub(Contact, 'getById').value(async () => {
         throw new Error('failure')
       })
 
-      testResponse(await server.inject(request(mocks.id, mocks.application)), Boom.badImplementation().output)
+      testResponse(await server.inject(request(mocks.id, mocks.contact)), Boom.badImplementation().output)
     })
   })
 
@@ -216,9 +217,9 @@ lab.experiment('Application route: ', () => {
       }
     })
 
-    lab.test('responds with the existing application when {id} is an existing guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => mocks.application)
-      sandbox.stub(Application.prototype, 'delete').value(async () => true)
+    lab.test('responds with the existing contact when {id} is an existing guid', async () => {
+      sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
+      sandbox.stub(Contact.prototype, 'delete').value(async () => true)
 
       testResponse(await server.inject(request(mocks.id)), {
         statusCode: 200,
@@ -227,7 +228,7 @@ lab.experiment('Application route: ', () => {
     })
 
     lab.test('responds with "Not Found" when {id} is an unknown guid', async () => {
-      sandbox.stub(Application, 'getById').value(async () => undefined)
+      sandbox.stub(Contact, 'getById').value(async () => undefined)
 
       testResponse(await server.inject(request(UNKNOWN_GUID)), Boom.notFound().output)
     })
@@ -237,9 +238,10 @@ lab.experiment('Application route: ', () => {
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
-      sandbox.stub(Application, 'getById').value(async () => {
+      sandbox.stub(Contact, 'getById').value(async () => {
         throw new Error('failure')
       })
+
       testResponse(await server.inject(request(mocks.id)), Boom.badImplementation().output)
     })
   })
