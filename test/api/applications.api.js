@@ -5,7 +5,7 @@ const lab = exports.lab = Lab.script()
 const supertest = require('supertest')
 const path = '/applications'
 
-require('dotenv').config()
+const { port } = require('../../server/config')
 
 // UNIT test begin
 lab.experiment('Application api: ', () => {
@@ -19,7 +19,7 @@ lab.experiment('Application api: ', () => {
 
   // Create server before the tests
   lab.before(async () => {
-    server = supertest.agent(`http://localhost:${process.env.PORT || 3000}`)
+    server = supertest.agent(`http://localhost:${port}`)
   })
 
   lab.experiment(`Add, Update and Remove an application`, () => {
