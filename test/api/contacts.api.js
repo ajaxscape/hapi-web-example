@@ -5,6 +5,8 @@ const lab = exports.lab = Lab.script()
 const supertest = require('supertest')
 const path = '/contacts'
 
+require('dotenv').config()
+
 // UNIT test begin
 lab.experiment('Contact api: ', () => {
   let server
@@ -17,7 +19,7 @@ lab.experiment('Contact api: ', () => {
 
   // Create server before the tests
   lab.before(async () => {
-    server = supertest.agent('http://localhost:3000')
+    server = supertest.agent(`http://localhost:${process.env.PORT || 3000}`)
   })
 
   lab.experiment(`Add, Update and Remove a contact`, () => {
