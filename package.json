@@ -7,6 +7,7 @@
     "start": "node index",
     "lint": "standard",
     "unit-test": "lab --pattern test --coverage --reporter console --output stdout --reporter html --output coverage.html --verbose -I 'core,__core-js_shared__'",
+    "api-test": "lab --pattern api --reporter console --output stdout --reporter json --output api-test.json --verbose -I 'core,__core-js_shared__'",
     "test": "npm run lint && npm run unit-test"
   },
   "author": "",
@@ -17,7 +18,6 @@
     "@hapi/inert": "^5.2.0",
     "@hapi/joi": "^15.0.3",
     "@hapi/vision": "^5.5.2",
-    "clone-deep": "^4.0.1",
     "dotenv": "^8.0.0",
     "hapi-robots": "^3.2.0",
     "hapi-router": "^5.0.0",
