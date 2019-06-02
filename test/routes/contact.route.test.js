@@ -33,8 +33,8 @@ lab.experiment('Contact route: ', () => {
 
   lab.beforeEach(() => {
     mocks = {
+      id: 'a5754ea4-aee8-40d3-a0d7-e7681ed8ef3a',
       contact: new Contact({
-        id: 'a5754ea4-aee8-40d3-a0d7-e7681ed8ef3a',
         firstName: 'James',
         lastName: 'Bond'
       })
@@ -96,8 +96,7 @@ lab.experiment('Contact route: ', () => {
     lab.test('responds with the existing contact when {id} is an existing guid', async () => {
       sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
 
-      const { id } = mocks.contact
-      testResponse(await server.inject(request(id)), {
+      testResponse(await server.inject(request(mocks.id)), {
         statusCode: 200,
         payload: mocks.contact
       })
@@ -117,8 +116,8 @@ lab.experiment('Contact route: ', () => {
       sandbox.stub(Contact, 'getById').value(async () => {
         throw new Error('failure')
       })
-      const { id } = mocks.contact
-      testResponse(await server.inject(request(id)), Boom.badImplementation().output)
+
+      testResponse(await server.inject(request(mocks.id)), Boom.badImplementation().output)
     })
   })
 
@@ -139,8 +138,7 @@ lab.experiment('Contact route: ', () => {
     lab.test('responds with the added contact', async () => {
       sandbox.stub(Contact.prototype, 'save').value(async () => mocks.contact)
 
-      const { firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request({ firstName, lastName })), {
+      testResponse(await server.inject(request(mocks.contact)), {
         statusCode: 200,
         payload: mocks.contact
       })
@@ -155,8 +153,7 @@ lab.experiment('Contact route: ', () => {
         throw new Error('failure')
       })
 
-      const { firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request({ firstName, lastName })), Boom.badImplementation().output)
+      testResponse(await server.inject(request(mocks.contact)), Boom.badImplementation().output)
     })
   })
 
@@ -178,8 +175,7 @@ lab.experiment('Contact route: ', () => {
       sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
       sandbox.stub(Contact.prototype, 'save').value(async () => mocks.contact)
 
-      const { id, firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request(id, { firstName, lastName })), {
+      testResponse(await server.inject(request(mocks.id, mocks.contact)), {
         statusCode: 200,
         payload: mocks.contact
       })
@@ -188,18 +184,15 @@ lab.experiment('Contact route: ', () => {
     lab.test('responds with "Not Found" when {id} is an unknown guid', async () => {
       sandbox.stub(Contact, 'getById').value(async () => undefined)
 
-      const { firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request(UNKNOWN_GUID, { firstName, lastName })), Boom.notFound().output)
+      testResponse(await server.inject(request(UNKNOWN_GUID, mocks.contact)), Boom.notFound().output)
     })
 
     lab.test('responds with "Bad Data" when {id} is an invalid guid', async () => {
-      const { firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request(INVALID_GUID, { firstName, lastName })), Boom.badData(invalidGuidMessage('id')).output)
+      testResponse(await server.inject(request(INVALID_GUID, mocks.contact)), Boom.badData(invalidGuidMessage('id')).output)
     })
 
     lab.test('responds with "Bad Data" when invalid data is patched', async () => {
-      const { id } = mocks.contact
-      testResponse(await server.inject(request(id, { firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}`).output)
+      testResponse(await server.inject(request(mocks.id, { firstName: 10101 })), Boom.badData(`${invalidStringMessage('firstName')}`).output)
     })
 
     lab.test('responds with "Bad Implementation" when the request throws an error', async () => {
@@ -207,8 +200,7 @@ lab.experiment('Contact route: ', () => {
         throw new Error('failure')
       })
 
-      const { id, firstName, lastName } = mocks.contact
-      testResponse(await server.inject(request(id, { firstName, lastName })), Boom.badImplementation().output)
+      testResponse(await server.inject(request(mocks.id, mocks.contact)), Boom.badImplementation().output)
     })
   })
 
@@ -229,8 +221,7 @@ lab.experiment('Contact route: ', () => {
       sandbox.stub(Contact, 'getById').value(async () => mocks.contact)
       sandbox.stub(Contact.prototype, 'delete').value(async () => true)
 
-      const { id } = mocks.contact
-      testResponse(await server.inject(request(id)), {
+      testResponse(await server.inject(request(mocks.id)), {
         statusCode: 200,
         payload: true
       })
@@ -250,8 +241,8 @@ lab.experiment('Contact route: ', () => {
       sandbox.stub(Contact, 'getById').value(async () => {
         throw new Error('failure')
       })
-      const { id } = mocks.contact
-      testResponse(await server.inject(request(id)), Boom.badImplementation().output)
+
+      testResponse(await server.inject(request(mocks.id)), Boom.badImplementation().output)
     })
   })
 })
