@@ -30,10 +30,10 @@ lab.experiment('Contact api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      const { id, firstName, lastName } = res.body
+      const { id } = res.body
       Code.expect(id).to.exist()
-      Code.expect(firstName).to.equal(contact.firstName)
-      Code.expect(lastName).to.equal(contact.lastName)
+
+      Code.expect(Object.entries(res.body)).to.include(Object.entries(contact))
       contactId = id
     })
 
@@ -54,10 +54,7 @@ lab.experiment('Contact api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      const { id, firstName, lastName } = res.body
-      Code.expect(id).to.equal(contactId)
-      Code.expect(firstName).to.equal(firstNameChanged)
-      Code.expect(lastName).to.equal(contact.lastName)
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: contactId, firstName: firstNameChanged, lastName: contact.lastName }))
     })
 
     lab.test(`Check if updated correctly when GET ${path}/{id} returns 200 and the correct contact data`, async () => {
@@ -65,10 +62,7 @@ lab.experiment('Contact api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      const { id, firstName, lastName } = res.body
-      Code.expect(id).to.equal(contactId)
-      Code.expect(firstName).to.equal(firstNameChanged)
-      Code.expect(lastName).to.equal(contact.lastName)
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: contactId, firstName: firstNameChanged, lastName: contact.lastName }))
     })
 
     lab.test(`Delete with DELETE ${path}/{id}`, async () => {

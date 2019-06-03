@@ -33,7 +33,7 @@ lab.experiment('Application api: ', () => {
       const { id } = res.body
       Code.expect(id).to.exist()
 
-      Code.expect(Object.entries(res.body)).to.include(Object.entries({ categoryId: categoryIdChanged, contactId: application.contactId }))
+      Code.expect(Object.entries(res.body)).to.include(Object.entries(application))
       applicationId = id
     })
 
@@ -54,7 +54,7 @@ lab.experiment('Application api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: categoryIdChanged, categoryId: categoryIdChanged, contactId: application.contactId }))
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: applicationId, categoryId: categoryIdChanged, contactId: application.contactId }))
     })
 
     lab.test(`Check if updated correctly when GET ${path}/{id} returns 200 and the correct application data`, async () => {
@@ -62,7 +62,7 @@ lab.experiment('Application api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: categoryIdChanged, categoryId: categoryIdChanged, contactId: application.contactId }))
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: applicationId, categoryId: categoryIdChanged, contactId: application.contactId }))
     })
 
     lab.test(`Delete with DELETE ${path}/{id}`, async () => {
