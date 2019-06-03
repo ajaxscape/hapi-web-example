@@ -10,6 +10,7 @@ const { port } = require('../../server/config')
 // UNIT test begin
 lab.experiment('Contact api: ', () => {
   let server
+  let contactId
   let contact = {
     firstName: 'James',
     lastName: 'Bond'
@@ -29,10 +30,11 @@ lab.experiment('Contact api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.firstName).to.equal(contact.firstName)
-      Code.expect(res.body.lastName).to.equal(contact.lastName)
-      contact = res.body
+      const { id, firstName, lastName } = res.body
+      Code.expect(id).to.exist()
+      Code.expect(firstName).to.equal(contact.firstName)
+      Code.expect(lastName).to.equal(contact.lastName)
+      contactId = id
     })
 
     lab.test(`Check if added correctly when GET ${path} returns an array of contacts containing the added contact`, async () => {
@@ -47,30 +49,30 @@ lab.experiment('Contact api: ', () => {
     })
 
     lab.test(`Update with PATCH ${path}/{id}`, async () => {
-      const res = await server.patch(path + '/' + contact.id)
+      const res = await server.patch(path + '/' + contactId)
         .send({ firstName: firstNameChanged })
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.firstName).to.equal(firstNameChanged)
-      Code.expect(res.body.lastName).to.equal(contact.lastName)
-      contact = res.body
+      const { id, firstName, lastName } = res.body
+      Code.expect(id).to.equal(contactId)
+      Code.expect(firstName).to.equal(firstNameChanged)
+      Code.expect(lastName).to.equal(contact.lastName)
     })
 
     lab.test(`Check if updated correctly when GET ${path}/{id} returns 200 and the correct contact data`, async () => {
-      const res = await server.get(path + '/' + contact.id)
+      const res = await server.get(path + '/' + contactId)
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.firstName).to.equal(firstNameChanged)
-      Code.expect(res.body.lastName).to.equal(contact.lastName)
-      contact = res.body
+      const { id, firstName, lastName } = res.body
+      Code.expect(id).to.equal(contactId)
+      Code.expect(firstName).to.equal(firstNameChanged)
+      Code.expect(lastName).to.equal(contact.lastName)
     })
 
     lab.test(`Delete with DELETE ${path}/{id}`, async () => {
-      const res = await server.delete(path + '/' + contact.id)
+      const res = await server.delete(path + '/' + contactId)
         .expect('Content-type', /json/)
         .expect(200)
 
@@ -78,7 +80,7 @@ lab.experiment('Contact api: ', () => {
     })
 
     lab.test(`Check if deleted correctly when GET ${path}/{id} returns 404`, async () => {
-      const res = await server.get(path + '/' + contact.id)
+      const res = await server.get(path + '/' + contactId)
         .expect('Content-type', /json/)
         .expect(404)
 
@@ -91,7 +93,7 @@ lab.experiment('Contact api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      const added = res.body.find(({ id }) => id === contact.id)
+      const added = res.body.find(({ id }) => id === contactId)
 
       Code.expect(added).to.not.exist()
     })

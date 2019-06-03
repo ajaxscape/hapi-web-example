@@ -10,6 +10,7 @@ const { port } = require('../../server/config')
 // UNIT test begin
 lab.experiment('Application api: ', () => {
   let server
+  let applicationId
   let application = {
     categoryId: 'c0c7b1bc-71ee-4a05-9f22-4bb0bc87da4d',
     contactId: 'e374c62d-8908-40c5-8f8c-53f051f42f61'
@@ -29,10 +30,11 @@ lab.experiment('Application api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.categoryId).to.equal(application.categoryId)
-      Code.expect(res.body.contactId).to.equal(application.contactId)
-      application = res.body
+      const { id } = res.body
+      Code.expect(id).to.exist()
+
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ categoryId: categoryIdChanged, contactId: application.contactId }))
+      applicationId = id
     })
 
     lab.test(`Check if added correctly when GET ${path} returns an array of applications containing the added application`, async () => {
@@ -47,30 +49,24 @@ lab.experiment('Application api: ', () => {
     })
 
     lab.test(`Update with PATCH ${path}/{id}`, async () => {
-      const res = await server.patch(path + '/' + application.id)
+      const res = await server.patch(path + '/' + applicationId)
         .send({ categoryId: categoryIdChanged })
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.categoryId).to.equal(categoryIdChanged)
-      Code.expect(res.body.contactId).to.equal(application.contactId)
-      application = res.body
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: categoryIdChanged, categoryId: categoryIdChanged, contactId: application.contactId }))
     })
 
     lab.test(`Check if updated correctly when GET ${path}/{id} returns 200 and the correct application data`, async () => {
-      const res = await server.get(path + '/' + application.id)
+      const res = await server.get(path + '/' + applicationId)
         .expect('Content-type', /json/)
         .expect(200)
 
-      Code.expect(res.body.id).to.exist()
-      Code.expect(res.body.categoryId).to.equal(categoryIdChanged)
-      Code.expect(res.body.contactId).to.equal(application.contactId)
-      application = res.body
+      Code.expect(Object.entries(res.body)).to.include(Object.entries({ id: categoryIdChanged, categoryId: categoryIdChanged, contactId: application.contactId }))
     })
 
     lab.test(`Delete with DELETE ${path}/{id}`, async () => {
-      const res = await server.delete(path + '/' + application.id)
+      const res = await server.delete(path + '/' + applicationId)
         .expect('Content-type', /json/)
         .expect(200)
 
@@ -78,7 +74,7 @@ lab.experiment('Application api: ', () => {
     })
 
     lab.test(`Check if deleted correctly when GET ${path}/{id} returns 404`, async () => {
-      const res = await server.get(path + '/' + application.id)
+      const res = await server.get(path + '/' + applicationId)
         .expect('Content-type', /json/)
         .expect(404)
 
@@ -91,7 +87,7 @@ lab.experiment('Application api: ', () => {
         .expect('Content-type', /json/)
         .expect(200)
 
-      const added = res.body.find(({ id }) => id === application.id)
+      const added = res.body.find(({ id }) => id === applicationId)
 
       Code.expect(added).to.not.exist()
     })
