@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 const uuid = require('uuid/v1')
 
-const model = {}
+const models = {}
 
 module.exports = class BaseModel {
   static get schema () {
@@ -18,24 +18,24 @@ module.exports = class BaseModel {
   }
 
   static async getAll () {
-    return Object.values(model)
+    return Object.values(models)
   }
 
   static async getById (id) {
-    return model[id]
+    return models[id]
   }
 
   async save () {
     if (!this.id) {
       this.id = uuid()
-      model[this.id] = this
+      models[this.id] = this
     }
     return this
   }
 
   async delete () {
-    if (this.id && model[this.id]) {
-      delete model[this.id]
+    if (this.id && models[this.id]) {
+      delete models[this.id]
       return true
     }
     return false
