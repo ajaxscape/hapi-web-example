@@ -9,7 +9,7 @@ const squeezeConfig = [{
 }]
 
 module.exports = {
-  plugin: require('good'),
+  plugin: require('@hapi/good'),
   options: {
     ops: {
       // Log ops stats every 30 seconds
@@ -19,11 +19,11 @@ module.exports = {
       // Output to console
       consoleReporter: [
         {
-          module: 'good-squeeze',
+          module: '@hapi/good-squeeze',
           name: 'Squeeze',
           args: squeezeConfig
         }, {
-          module: 'good-console',
+          module: '@hapi/good-console',
           args: [
             {
               format: 'YYYY-MM-DD HH:mm:ss',
@@ -34,11 +34,11 @@ module.exports = {
       // Output to file
       fileReporter: [
         {
-          module: 'good-squeeze',
+          module: '@hapi/good-squeeze',
           name: 'Squeeze',
           args: squeezeConfig
         }, {
-          module: 'good-squeeze',
+          module: '@hapi/good-squeeze',
           name: 'SafeJson'
         }, {
           module: 'good-file',
